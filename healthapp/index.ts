@@ -29,8 +29,10 @@ app.get('/bmi', (req, res) => {
 });
 
 app.post('/exercises', (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const body: any = req.body;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const body = req.body;
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { daily_exercises, target } = body;
 
   // Check for missing parameters
