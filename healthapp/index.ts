@@ -1,7 +1,9 @@
 import express from 'express';
 import { calculateBmi } from './bmiCalculator.ts';
+import { calculateExercises } from './exerciseCalculator.ts';
 
 const app = express();
+app.use(express.json());
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
@@ -17,10 +19,8 @@ app.get('/bmi', (req, res) => {
     return res.status(400).json({ error: 'malformatted parameters' });
   }
 
-  // Calculate BMI using your module
   const bmi = calculateBmi(height, weight);
 
-  // Return the properly formatted JSON response
   return res.json({
     weight,
     height,
@@ -28,7 +28,41 @@ app.get('/bmi', (req, res) => {
   });
 });
 
-const PORT = 3003;
+app.post('/exercises', (req, res) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const body: any = req.body;
+  const { daily_exercises, target } = body;
+
+  // Check for missing parameters
+  if (daily_exercises === undefined || target === undefined) {
+    return res.status(400).json({ error: 'parameters missing' });
+  }
+
+  // Check if daily_exercises is an array and target is a number
+  if (!Array.isArray(daily_exercises) || isNaN(Number(target))) {
+    return res.status(400).json({ error: 'malformatted parameters' });
+  }
+
+  // Check if every item in the daily_exercises array is a valid number
+  let hasInvalidHours = false;
+  const parsedExercises = daily_exercises.map((hour: string | number) => {
+    if (isNaN(Number(hour))) {
+      hasInvalidHours = true;
+    }
+    return Number(hour);
+  });
+
+  if (hasInvalidHours) {
+    return res.status(400).json({ error: 'malformatted parameters' });
+  }
+
+  const result = calculateExercises(parsedExercises, Number(target));
+  //console.log(result);
+
+  return res.json(result);
+});
+
+const PORT = 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

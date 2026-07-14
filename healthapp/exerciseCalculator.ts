@@ -37,7 +37,7 @@ const parseExerciseArguments = (args: string[]): ExerciseValues => {
   };
 };
 
-const calculateExercises = (dailyHours: number[], target: number): Result => {
+export const calculateExercises = (dailyHours: number[], target: number): Result => {
   const periodLength = dailyHours.length;
 
   // Filter out the days with 0 hours to find the training days
@@ -85,4 +85,18 @@ try {
     errorMessage += ' Error: ' + error.message;
   }
   console.log(errorMessage);
+}
+
+// Only run the following code if this module is executed directly (not imported)
+if (process.argv[1] === import.meta.filename) {
+  try {
+    const { target, dailyHours } = parseExerciseArguments(process.argv);
+    console.log(calculateExercises(dailyHours, target));
+  } catch (error: unknown) {
+    let errorMessage = 'Something bad happened.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
+  }
 }
