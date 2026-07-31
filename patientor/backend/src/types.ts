@@ -15,3 +15,5 @@ export interface Patient {
 
 // Utility type that removes the 'ssn' property
 export type NonSensitivePatient = Omit<Patient, 'ssn'>;
+
+export type NewPatient = Omit<Patient, 'id'>;
