@@ -1,5 +1,6 @@
 import express from 'express';
 import patientService from '../services/patientService.ts';
+import { parseNewPatient } from '../utils.ts';
 
 const router: express.Router = express.Router();
 
@@ -10,16 +11,9 @@ router.get('/', (_req, res) => {
 router.post('/', (req, res) => {
   try {
     // Extract the data from the request body
-    const { name, dateOfBirth, ssn, gender, occupation } = req.body;
+    const newPatientData = parseNewPatient(req.body);
 
-    // Pass the typed data to the service
-    const addedPatient = patientService.addPatient({
-      name,
-      dateOfBirth,
-      ssn,
-      gender,
-      occupation,
-    });
+    const addedPatient = patientService.addPatient(newPatientData);
 
     // Return the newly created patient back to the frontend
     res.json(addedPatient);
