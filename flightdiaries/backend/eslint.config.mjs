@@ -1,6 +1,9 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 export default tseslint.config({
   files: ['**/*.ts'],
