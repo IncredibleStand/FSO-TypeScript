@@ -10,42 +10,47 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Install patientor backend dependencies
         working-directory: ./patientor/backend
-        run: npm install --legacy-peer-deps
+        run: pnpm install
 
       - name: Lint patientor backend
         working-directory: ./patientor/backend
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Start patientor backend server
         working-directory: ./patientor/backend
         run: |
-          npm start &
+          pnpm start &
           echo $! > server.pid
           sleep 3
 
       - name: Install test dependencies
         working-directory: ./patientor-api-tests
-        run: npm install
+        run: pnpm install
 
       - name: Install Playwright browsers
         working-directory: ./patientor-api-tests
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run API tests
         working-directory: ./patientor-api-tests
-        run: npm test
+        run: pnpm test
 
       - name: Upload test report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
